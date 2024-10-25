@@ -26,7 +26,7 @@ def search_songs(query: str) -> List[Song]:
         )
         songs.append(song)
    
-
+        print(song)
     return songs
 
 

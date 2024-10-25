@@ -1,4 +1,5 @@
 #display
+from math import ceil
 import tkinter as tk
 from token import COMMA
 import customtkinter as customtk
@@ -6,6 +7,7 @@ from PIL import Image, ImageTk
 import pygame
 from music import *
 from search import search_songs
+import math
 
 customtk.set_appearance_mode("System")
 customtk.set_default_color_theme("blue")
@@ -45,12 +47,13 @@ playlist_text.place(x=130,y=30)
 right_frame = customtk.CTkFrame(master=root, width=300, height=500, corner_radius=10, bg_color="#000000", fg_color="#191414",border_color="#000000",border_width=4)
 right_frame.place(x=980, y=50)
 select_buttons=[]
+download_buttons=[]
 #main frame
 def create_frames(num_frames):
     global frames
     frames.clear()  # Clear existing frames
     for i in range(num_frames):  # Create new frames
-        frame = customtk.CTkFrame(master=root, width=500, height=35, corner_radius=20, fg_color="#000000", bg_color="#3C3D37")
+        frame = customtk.CTkFrame(master=root, width=515, height=35, corner_radius=20, fg_color="#000000", bg_color="#3C3D37")
         frames.append(frame)
         frame.place(relx=0.3, rely=0.15 + (i * 0.07))  
         
@@ -60,7 +63,14 @@ def create_frames(num_frames):
         select_button = customtk.CTkButton(master=root, image=select_image_tk1,command=mute_music, text="", width=25, height=25, bg_color="#030201", fg_color="#030201",corner_radius=5,hover_color="#1F282C")
         select_button.place(relx=0.315, rely=0.176 + (i*0.07), anchor=tk.CENTER)
         select_buttons.append(select_button)
-
+        '''
+        download_image1 = Image.open("img/download.png")
+        download_image1 = download_image1.resize((25,25), Image.LANCZOS)
+        download_image_tk1 = ImageTk.PhotoImage(download_image1)
+        download_button = customtk.CTkButton(master=root, image=download_image_tk1,command=mute_music, text="", width=25, height=25, bg_color="#030201", fg_color="black",corner_radius=5,hover_color="#1F282C")
+        download_button.place(relx=0.68, rely=0.176 + (i*0.07), anchor=tk.CENTER)
+        download_buttons.append(download_button)
+        '''
 
 
 # Song list
@@ -110,7 +120,7 @@ def play_pause_music():
             play_music()  # Start a new song if no song was playing before
 
 def play_music():
-    global n, song_length, song_playing
+    global n, song_length, song_playing, song_duration_label  
 
     song_name = list_songs[n]
     pygame.mixer.music.load(song_name)
@@ -121,8 +131,15 @@ def play_music():
     create_pause_button()  # Show pause button when the song is playing
 
     # Update the song length and song name label
-    song_length = pygame.mixer.Sound(song_name).get_length()  # Get the length of the song
-    song_name_label.config(text=song_name[6:-4])  # Update song name
+    song_length = pygame.mixer.Sound(song_name).get_length()  # Get the length of the song in seconds
+    song_name_label.config(text=song_name[6:-4],wraplength=400)  # Update song name
+
+    # Convert song length to minutes:seconds format
+    song_duration = f"{int(song_length // 60)}:{int(song_length % 60):02d}"
+    
+    # Update the song duration label on the window
+    song_duration_label.config(text=f"{song_duration}")  # Update song duration label
+    print(song_duration)  # Optional print for debugging
 
     slider.set(0)  # Initialize slider to 0
     update_progress()  # Start updating the seek bar
@@ -130,6 +147,12 @@ def play_music():
     create_like_button()
     create_loop_button()
     create_lyricsoff_button()
+
+# Somewhere in your initialization code, you'll need to create the `song_duration_label`
+song_duration_label = tk.Label(root, text="0:00",fg="white",bg="black",font="circular 14")  # Initial placeholder text
+song_duration_label.place(relx=0.66,rely=0.865) 
+
+
 
 def pause_music():
     """This function pauses the music."""
@@ -162,6 +185,12 @@ def volume(value):
     current_volume = float(value)  # Store the current volume level
     pygame.mixer.music.set_volume(current_volume)  # Apply the volume change to the currently playing music
 
+def homepage():
+    global frames
+    # Clear existing frames before displaying new results
+    for frame in frames:
+        frame.destroy()  
+    create_frames(10)
 def like_music():
     create_liked_button()
 
@@ -228,7 +257,7 @@ def create_like_button():
     like_image1 = like_image1.resize((30, 30), Image.LANCZOS)
     like_image_tk1 = ImageTk.PhotoImage(like_image1)
     like_button = customtk.CTkButton(master=root, image=like_image_tk1, text="", command=like_music, width=25, height=25, bg_color="#030201", fg_color="#030201",corner_radius=5,hover_color="#1F282C")
-    like_button.place(relx=0.67, rely=0.880, anchor=tk.CENTER)
+    like_button.place(relx=0.25, rely=0.91880, anchor=tk.CENTER)
     return like_button
 
 def create_liked_button():
@@ -237,7 +266,7 @@ def create_liked_button():
     liked_image1 = liked_image1.resize((35, 35), Image.LANCZOS)
     liked_image_tk1 = ImageTk.PhotoImage(liked_image1)
     liked_button = customtk.CTkButton(master=root, image=liked_image_tk1, text="",command=unlike_music, width=25, height=25, bg_color="#030201", fg_color="#030201",corner_radius=5,hover_color="#1F282C")
-    liked_button.place(relx=0.67, rely=0.880, anchor=tk.CENTER)
+    liked_button.place(relx=0.25, rely=0.91880, anchor=tk.CENTER)
 
 def create_lyricsoff_button():
     
@@ -289,7 +318,7 @@ def create_home_button():
     home_image1 = Image.open("img/homewhitebutton.png")
     home_image1 = home_image1.resize((40,40), Image.LANCZOS)
     home_image_tk1 = ImageTk.PhotoImage(home_image1)
-    home_button = customtk.CTkButton(master=root, image=home_image_tk1, text="", width=25, height=25, bg_color="#030201", fg_color="#030201",corner_radius=5,hover_color="#1F282C")
+    home_button = customtk.CTkButton(master=root, image=home_image_tk1, command= homepage,text="", width=25, height=25, bg_color="#030201", fg_color="#030201",corner_radius=5,hover_color="#1F282C")
     home_button.place(relx=0.97, rely=0.04, anchor=tk.CENTER)
 
 
@@ -333,10 +362,10 @@ def display_results(search_results):
                 master=main_frame,
                 text=f"Song: {result.title}, Artist: {result.artist}, Album: {result.album}",
                 font=("Circular std",11),
-                width=500,
+                width=475,
                 text_color="white",
                 fg_color="#000000",  
-                wraplength=480  # fits the result within the frame width
+                wraplength=400  # fits the result within the frame width
             )
             
             label.pack(padx=20, pady=5)  
@@ -349,7 +378,7 @@ def on_search(event=None):
         search_results = search_songs(query)  # Assuming perform_search is the function from search.py
         display_results(search_results)
 
-create_frames(10)
+    
 search()
 
 # Volume Slider
@@ -368,7 +397,7 @@ def create_slider():
                                  width=400, height=15, bg_color="#000000", 
                                  button_color="#FAF9F6", fg_color="#3c3c3c", 
                                  button_hover_color="white", progress_color="#1DB954")
-    slider.place(relx=0.34, rely=0.87)  # Adjust these values as needed
+    slider.place(relx=0.34, rely=0.87) 
 
 create_home_button()
 create_volumeon_button()

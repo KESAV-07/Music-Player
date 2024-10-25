@@ -1,7 +1,7 @@
 from googleapiclient.discovery import build
 import yt_dlp
 import re
-from URL import *
+from URL import *  # Ensure this imports the url function correctly
 
 # Download function with parameters for song and artist names
 def download_song(song_name, artist_name):
@@ -39,7 +39,6 @@ def download_song(song_name, artist_name):
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             ydl.download([video_url])
 
-    
     def sanitize_filename(name):
         return re.sub(r'[\\/*?:"<>|]', "", name)
 
@@ -51,8 +50,6 @@ def download_song(song_name, artist_name):
         title = get_video_info(video_id)
         if title:
             print(f"Video Title: {title}")
-            
-            e
             sanitized_song_name = sanitize_filename(song_name)
             sanitized_artist_name = sanitize_filename(artist_name)
             custom_filename = r'C:\Users\aravi\OneDrive\Desktop\a;;\kesav\music_player\music\{}_by_{}'.format(sanitized_song_name, sanitized_artist_name)
@@ -63,4 +60,3 @@ def download_song(song_name, artist_name):
             print("Could not retrieve video information.")
     else:
         print("Invalid YouTube URL.")
-

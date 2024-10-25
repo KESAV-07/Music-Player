@@ -63,14 +63,14 @@ def create_frames(num_frames):
         select_button = customtk.CTkButton(master=root, image=select_image_tk1,command=mute_music, text="", width=25, height=25, bg_color="#030201", fg_color="#030201",corner_radius=5,hover_color="#1F282C")
         select_button.place(relx=0.315, rely=0.176 + (i*0.07), anchor=tk.CENTER)
         select_buttons.append(select_button)
-
+        '''
         download_image1 = Image.open("img/download.png")
         download_image1 = download_image1.resize((25,25), Image.LANCZOS)
         download_image_tk1 = ImageTk.PhotoImage(download_image1)
         download_button = customtk.CTkButton(master=root, image=download_image_tk1,command=mute_music, text="", width=25, height=25, bg_color="#030201", fg_color="black",corner_radius=5,hover_color="#1F282C")
         download_button.place(relx=0.68, rely=0.176 + (i*0.07), anchor=tk.CENTER)
         download_buttons.append(download_button)
-
+        '''
 
 
 # Song list
@@ -185,6 +185,12 @@ def volume(value):
     current_volume = float(value)  # Store the current volume level
     pygame.mixer.music.set_volume(current_volume)  # Apply the volume change to the currently playing music
 
+def homepage():
+    global frames
+    # Clear existing frames before displaying new results
+    for frame in frames:
+        frame.destroy()  
+    create_frames(10)
 def like_music():
     create_liked_button()
 
@@ -312,7 +318,7 @@ def create_home_button():
     home_image1 = Image.open("img/homewhitebutton.png")
     home_image1 = home_image1.resize((40,40), Image.LANCZOS)
     home_image_tk1 = ImageTk.PhotoImage(home_image1)
-    home_button = customtk.CTkButton(master=root, image=home_image_tk1, text="", width=25, height=25, bg_color="#030201", fg_color="#030201",corner_radius=5,hover_color="#1F282C")
+    home_button = customtk.CTkButton(master=root, image=home_image_tk1, command= homepage,text="", width=25, height=25, bg_color="#030201", fg_color="#030201",corner_radius=5,hover_color="#1F282C")
     home_button.place(relx=0.97, rely=0.04, anchor=tk.CENTER)
 
 
@@ -372,7 +378,7 @@ def on_search(event=None):
         search_results = search_songs(query)  # Assuming perform_search is the function from search.py
         display_results(search_results)
 
-create_frames(10)
+    
 search()
 
 # Volume Slider
@@ -391,7 +397,7 @@ def create_slider():
                                  width=400, height=15, bg_color="#000000", 
                                  button_color="#FAF9F6", fg_color="#3c3c3c", 
                                  button_hover_color="white", progress_color="#1DB954")
-    slider.place(relx=0.34, rely=0.87)  # Adjust these values as needed
+    slider.place(relx=0.34, rely=0.87) 
 
 create_home_button()
 create_volumeon_button()

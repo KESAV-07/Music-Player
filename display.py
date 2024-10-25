@@ -8,6 +8,8 @@ import pygame
 from music import *
 from search import search_songs
 import math
+from download import *
+import threading
 
 customtk.set_appearance_mode("System")
 customtk.set_default_color_theme("blue")
@@ -48,21 +50,40 @@ right_frame = customtk.CTkFrame(master=root, width=300, height=500, corner_radiu
 right_frame.place(x=980, y=50)
 select_buttons=[]
 download_buttons=[]
+
+def download(song_name, artist_name):
+    # Start a new thread for downloading
+    download_thread = threading.Thread(target=download_song, args=(song_name, artist_name))
+    download_thread.start()
+
 #main frame
-def create_frames(num_frames):
+def create_frames(search_results):
     global frames
     frames.clear()  # Clear existing frames
-    for i in range(num_frames):  # Create new frames
+    for i, result in enumerate(search_results):  # Create new frames using search results
         frame = customtk.CTkFrame(master=root, width=515, height=35, corner_radius=20, fg_color="#000000", bg_color="#3C3D37")
         frames.append(frame)
         frame.place(relx=0.3, rely=0.15 + (i * 0.07))  
         
         select_image1 = Image.open("img/playbuttonwhite2.png")
-        select_image1 = select_image1.resize((25,25), Image.LANCZOS)
+        select_image1 = select_image1.resize((25, 25), Image.LANCZOS)
         select_image_tk1 = ImageTk.PhotoImage(select_image1)
-        select_button = customtk.CTkButton(master=root, image=select_image_tk1,command=mute_music, text="", width=25, height=25, bg_color="#030201", fg_color="#030201",corner_radius=5,hover_color="#1F282C")
-        select_button.place(relx=0.315, rely=0.176 + (i*0.07), anchor=tk.CENTER)
-        select_buttons.append(select_button)
+
+        # Modify the button command to pass the song name and artist name
+        select_button = customtk.CTkButton(
+            master=root,
+            image=select_image_tk1,
+            command=lambda name=result.title, artist=result.artist: download(name, artist),  # Pass song and artist
+            text="",
+            width=25,
+            height=25,
+            bg_color="#030201",
+            fg_color="#030201",
+            corner_radius=5,
+            hover_color="#1F282C"
+        )
+        
+        select_button.place(relx=0.315, rely=0.176 + (i * 0.07), anchor=tk.CENTER)
         '''
         download_image1 = Image.open("img/download.png")
         download_image1 = download_image1.resize((25,25), Image.LANCZOS)
@@ -350,7 +371,7 @@ def display_results(search_results):
     # Clear existing frames before displaying new results
     for frame in frames:
         frame.destroy()  # Destroy old frames
-    create_frames(len(search_results))  # Create new frames for the new results
+    create_frames(search_results)  # Pass search results to create_frames
 
     # Loop through search results and assign each result to a frame
     for x, result in enumerate(search_results):
@@ -361,14 +382,14 @@ def display_results(search_results):
             label = customtk.CTkLabel(
                 master=main_frame,
                 text=f"Song: {result.title}, Artist: {result.artist}, Album: {result.album}",
-                font=("Circular std",11),
+                font=("Circular std", 11),
                 width=475,
                 text_color="white",
                 fg_color="#000000",  
                 wraplength=400  # fits the result within the frame width
             )
             
-            label.pack(padx=20, pady=5)  
+            label.pack(padx=20, pady=5)
 
 def on_search(event=None):
     query = search_entry.get()  # Get the input from the entry box

@@ -1,6 +1,6 @@
 from googleapiclient.discovery import build
 #url
-def url():
+def url(song_name,artist_name):
     def get_youtube_url(song_name, artist_name):
         api_key = 'AIzaSyBt7BEVr-PumbCGgZI1zSNDmQQv0S9HCp4' 
         youtube = build('youtube', 'v3', developerKey=api_key)
@@ -22,8 +22,7 @@ def url():
         return video_url
 
     
-    song_name = input("Enter the song name: ")
-    artist_name = input("Enter the artist name: ")
+
     urll = get_youtube_url(song_name, artist_name)
 
     return urll

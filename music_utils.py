@@ -1,10 +1,10 @@
+# music_utils.py
+
 import os
 from googleapiclient.discovery import build
 import yt_dlp
 import re
-from URL import *  # Ensure this imports the url function correctly
 
-# Download function with parameters for song and artist names
 def download_song(song_name, artist_name):
     def get_video_id(video_url):
         # Extract video ID from YouTube URL
@@ -60,12 +60,11 @@ def download_song(song_name, artist_name):
                 # Download the audio and save it with the custom filename
                 download_audio_as_wav(video_url, custom_filename)
                 print("Download complete.")
-                return custom_filename
+                return custom_filename + '.wav'  # Return the path to the downloaded file
             else:
                 print("The file already exists. Skipping download.")
+                return custom_filename + '.wav'  # Return the existing file path
         else:
             print("Could not retrieve video information.")
     else:
         print("Invalid YouTube URL.")
-    
-

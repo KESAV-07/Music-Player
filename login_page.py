@@ -25,14 +25,18 @@ class loginpage:
                 writer = csv.DictWriter(file, fieldnames=["username", "password"])
                 writer.writeheader()
     
+
+
     def save_user_data(self, username, password):
         self.check_csv()
 
+        # Check if the user already exists in 'users.csv'
         with open('users.csv', mode='r', newline='') as file:
             reader = csv.DictReader(file)
             users = {row['username']: row['password'] for row in reader}
 
         if username in users:
+            # Check if the password matches
             if users[username] == password:
                 self.show_message("Login successful!")
                 return True
@@ -40,11 +44,28 @@ class loginpage:
                 self.show_message("Wrong password!")
                 return False
         else:
+            # Register the new user by appending to 'users.csv'
             with open('users.csv', mode='a', newline='') as file:
                 writer = csv.DictWriter(file, fieldnames=["username", "password"])
                 writer.writerow({"username": username, "password": password})
             self.show_message("User registered successfully!")
+
+            # Create a folder for the user in the specified directory
+            user_dir = r"C:\Users\aravi\OneDrive\Desktop\a;;\kesav\music_player\user"
+            user_folder_path = os.path.join(user_dir, username)
+    
+            # Create the user directory if it does not exist
+            if not os.path.exists(user_folder_path):
+                os.makedirs(user_folder_path)
+
+            # Create an empty 'liked_songs.csv' file inside the user folder
+            liked_songs_file = os.path.join(user_folder_path, "liked_songs.csv")
+            with open(liked_songs_file, mode='w', newline='') as file:
+                writer = csv.writer(file)
+                writer.writerow(["song_id", "song_name", "artist"])  # Add headers if needed
+
             return True
+
 
     def run(self):
         running = True
@@ -231,6 +252,7 @@ class loginpage:
 
             pygame.display.update()
             clock.tick(60)
+
 
 if __name__ == '__main__':
     SCREENSIZE = (1280, 720)

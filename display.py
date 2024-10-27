@@ -11,6 +11,7 @@ import math
 from download import *
 import threading
 
+
 customtk.set_appearance_mode("System")
 customtk.set_default_color_theme("blue")
 
@@ -40,13 +41,13 @@ bottom_frame = customtk.CTkFrame(master=root, width=1280, height=50, corner_radi
 bottom_frame.place(x=0, y=0)
 
 # Left frame
-left_frame = customtk.CTkFrame(master=root, width=300, height=500, corner_radius=10, bg_color="#000000", fg_color="#191414",border_color="#000000",border_width=4)
+left_frame = customtk.CTkFrame(master=root, width=300, height=500, corner_radius=10, bg_color="#000000", fg_color="#121212",border_color="#000000",border_width=4)
 left_frame.place(x=0, y=50)
 playlist_text = tk.Label(left_frame,text="Your Playlist",fg="white",bg="#191414",font=(" Circular Std",22))
 playlist_text.place(x=130,y=30)
 
 # Right frame
-right_frame = customtk.CTkFrame(master=root, width=300, height=500, corner_radius=10, bg_color="#000000", fg_color="#191414",border_color="#000000",border_width=4)
+right_frame = customtk.CTkFrame(master=root, width=300, height=500, corner_radius=10, bg_color="#000000", fg_color="#121212",border_color="#000000",border_width=4)
 right_frame.place(x=980, y=50)
 select_buttons=[]
 download_buttons=[]
@@ -60,8 +61,12 @@ def download(song_name, artist_name):
 def create_frames(search_results):
     global frames
     frames.clear()  # Clear existing frames
+    # Create a parent frame to contain all the individual frames
+    parent_frame = customtk.CTkFrame(master=root, width=580, height=(len(search_results) * 50 -40), corner_radius=25, fg_color="#191919", bg_color="#000000")
+    parent_frame.place(relx=0.276, rely=0.138)  # Position the parent frame above the first frame
+
     for i, result in enumerate(search_results):  # Create new frames using search results
-        frame = customtk.CTkFrame(master=root, width=515, height=35, corner_radius=20, fg_color="#000000", bg_color="#3C3D37")
+        frame = customtk.CTkFrame(master=root, width=515, height=35, corner_radius=20, fg_color="#000000", bg_color="#191919")
         frames.append(frame)
         frame.place(relx=0.3, rely=0.15 + (i * 0.07))  
         
@@ -95,12 +100,13 @@ def create_frames(search_results):
 
 
 # Song list
-list_songs = ['music/timeless-weekend,playboi carti.wav', 'music/thick of it - ksi.wav', 'music/shape of u chem version.wav']
+#list_songs = ['music/HIGHEST IN THE ROOM_by_Travis Scott.wav', 'music/Naa Ready (From Leo)_by_Anirudh Ravichander.wav', 'music/shape of u chem version.wav']
 list_covers = ["bg.png"]
 n = 0
+muted = False
 
 # Song name label
-song_name_label = tk.Label(root, text="", bg="#000000", fg="white", font=("Circular", 18))
+song_name_label = tk.Label(root, text="", bg="#000000", fg="white", font=("Circular", 14),wraplength=200)
 song_name_label.place(relx=0.14, rely=0.92, anchor=tk.CENTER)
 
 # Progress bar variable
@@ -146,7 +152,12 @@ def play_music():
     song_name = list_songs[n]
     pygame.mixer.music.load(song_name)
     pygame.mixer.music.play(loops=0)
-    pygame.mixer.music.set_volume(current_volume)  # Set the volume to the current volume level
+
+    # Set the volume based on mute state
+    if muted:
+        pygame.mixer.music.set_volume(0)  # Keep it muted
+    else:
+        pygame.mixer.music.set_volume(current_volume)  # Set the volume to the current volume level
 
     song_playing = True  
     create_pause_button()  # Show pause button when the song is playing
@@ -231,13 +242,16 @@ def lyricsoff_mode():
     create_lyricsoff_button()
 
 def mute_music():
-    """Mute the music and set the volume slider to 0."""
+    global muted
+    muted = True
     pygame.mixer.music.set_volume(0)  # Mute the audio
     volume_slider.set(0)  # Bring the slider to 0
     create_volumeoff_button()  # Switch to the muted button
 
+# Unmute function
 def unmute_music():
-    """Unmute the music and restore the previous volume level."""
+    global muted
+    muted = False
     pygame.mixer.music.set_volume(current_volume)  # Restore the audio to the previously set volume
     volume_slider.set(current_volume)  # Restore the slider to the current volume level
     create_volumeon_button()  # Switch to the volume on button

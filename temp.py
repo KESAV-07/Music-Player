@@ -7,7 +7,9 @@ from PIL import Image, ImageTk
 import pygame
 from music import *
 from search import search_songs
-import math
+import os
+from download import download_song
+from functools import partial
 
 customtk.set_appearance_mode("System")
 customtk.set_default_color_theme("blue")
@@ -60,7 +62,9 @@ def create_frames(num_frames):
         select_image1 = Image.open("img/playbuttonwhite2.png")
         select_image1 = select_image1.resize((25,25), Image.LANCZOS)
         select_image_tk1 = ImageTk.PhotoImage(select_image1)
-        select_button = customtk.CTkButton(master=root, image=select_image_tk1,command=mute_music, text="", width=25, height=25, bg_color="#030201", fg_color="#030201",corner_radius=5,hover_color="#1F282C")
+        music = search_results[i]
+        f = partial(downloadAndPlay,music)
+        select_button = customtk.CTkButton(master=root, image=select_image_tk1,command=f, text="", width=25, height=25, bg_color="#030201", fg_color="#030201",corner_radius=5,hover_color="#1F282C")
         select_button.place(relx=0.315, rely=0.176 + (i*0.07), anchor=tk.CENTER)
         select_buttons.append(select_button)
         '''
@@ -71,10 +75,14 @@ def create_frames(num_frames):
         download_button.place(relx=0.68, rely=0.176 + (i*0.07), anchor=tk.CENTER)
         download_buttons.append(download_button)
         '''
-
+def downloadAndPlay(music):
+    song_name = download_song(music.title,music.artist)
+    list_songs.clear()
+    list_songs.append(f'music/{song_name}.wav')
+    next_song()
 
 # Song list
-list_songs = ['music/timeless-weekend,playboi carti.wav', 'music/thick of it - ksi.wav', 'music/shape of u chem version.wav']
+list_songs = []
 list_covers = ["bg.png"]
 n = 0
 
@@ -121,8 +129,10 @@ def play_pause_music():
 
 def play_music():
     global n, song_length, song_playing, song_duration_label  
-
-    song_name = list_songs[n]
+    try:
+        song_name = list_songs[n]
+    except:
+        pass
     pygame.mixer.music.load(song_name)
     pygame.mixer.music.play(loops=0)
     pygame.mixer.music.set_volume(current_volume)  # Set the volume to the current volume level
@@ -371,6 +381,7 @@ def display_results(search_results):
             label.pack(padx=20, pady=5)  
 
 def on_search(event=None):
+    global search_results
     query = search_entry.get()  # Get the input from the entry box
     if query.strip():  # Check if the input is not empty
         print(f"Search Query: {query}")  # Print the query to the terminal

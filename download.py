@@ -31,7 +31,7 @@ def download_song(song_name, artist_name):
             'postprocessors': [{
                 'key': 'FFmpegExtractAudio',
                 'preferredcodec': 'wav', 
-                'preferredquality': '192',  
+                'preferredquality': '200',  
             }],
             'outtmpl': custom_filename + '.%(ext)s',  # Automatically adds the correct file extension
             'ffmpeg_location': r'C:\ffmpeg\ffmpeg-2024-10-13-git-e347b4ff31-full_build\bin',  # Adjusted path to FFmpeg
@@ -53,7 +53,7 @@ def download_song(song_name, artist_name):
             print(f"Video Title: {title}")
             sanitized_song_name = sanitize_filename(song_name)
             sanitized_artist_name = sanitize_filename(artist_name)
-            custom_filename = r'{}\music\{}_by_{}'.format(os.getcwd(),sanitized_song_name, sanitized_artist_name)
+            custom_filename = r'music\{}_by_{}'.format(sanitized_song_name, sanitized_artist_name)
             
             # Check if the file already exists
             if not os.path.exists(custom_filename + '.wav'):
@@ -68,4 +68,4 @@ def download_song(song_name, artist_name):
     else:
         print("Invalid YouTube URL.")
     
-    return '{}_by_{}'.format(sanitized_song_name, sanitized_artist_name)  # Ensure this line is outside the if statement
+    return 'music/{}_by_{}'.format(sanitized_song_name, sanitized_artist_name)  # Ensure this line is outside the if statement

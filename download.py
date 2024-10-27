@@ -2,6 +2,7 @@ import os
 from googleapiclient.discovery import build
 import yt_dlp
 import re
+import os
 from URL import *  # Ensure this imports the url function correctly
 
 # Download function with parameters for song and artist names
@@ -34,7 +35,7 @@ def download_song(song_name, artist_name):
                 'preferredquality': '192',  
             }],
             'outtmpl': custom_filename + '.%(ext)s',  # Automatically adds the correct file extension
-            'ffmpeg_location': r'C:\ffmpeg\ffmpeg-2024-10-13-git-e347b4ff31-full_build\bin',  # Path to ffmpeg
+            'ffmpeg_location': r'C:\ffmpeg',  # Path to ffmpeg
         }
 
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -53,7 +54,7 @@ def download_song(song_name, artist_name):
             print(f"Video Title: {title}")
             sanitized_song_name = sanitize_filename(song_name)
             sanitized_artist_name = sanitize_filename(artist_name)
-            custom_filename = r'C:\Users\aravi\OneDrive\Desktop\a;;\kesav\music_player\music\{}_by_{}'.format(sanitized_song_name, sanitized_artist_name)
+            custom_filename = r'{}\music\{}_by_{}'.format(os.getcwd(),sanitized_song_name, sanitized_artist_name)
             
             # Check if the file already exists
             if not os.path.exists(custom_filename + '.wav'):
@@ -67,5 +68,9 @@ def download_song(song_name, artist_name):
             print("Could not retrieve video information.")
     else:
         print("Invalid YouTube URL.")
+<<<<<<< HEAD
     
 
+=======
+    return '{}_by_{}'.format(sanitized_song_name, sanitized_artist_name)
+>>>>>>> c603f3182e2e2c6032fec7b300360178c637be53

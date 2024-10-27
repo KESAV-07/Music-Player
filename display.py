@@ -1,5 +1,5 @@
 #display
-from math import ceil
+import time
 import tkinter as tk
 from tkinter.font import BOLD
 from token import COMMA
@@ -126,7 +126,7 @@ def create_frames(num_frames):
 def downloadAndPlay(music):
     song_name = download_song(music.title,music.artist)
     list_songs.clear()
-    list_songs.append(f'music/{song_name}.wav')
+    list_songs.append(f'{song_name}.wav')
     next_song()
 
 # Song list
@@ -179,7 +179,7 @@ def play_pause_music():
         else:
             play_music()  # Start a new song if no song was playing before
 def play_music():
-    global n, song_length, song_playing, song_duration_label, artist_name_label  
+    global n, song_length, song_playing, song_duration_label, artist_name_label
     try:
         song_name = list_songs[n]
     except:
@@ -240,7 +240,6 @@ def pause_music():
 
 def seek_music(position):
     """Seek to a specific position in the song."""
-    global song_length
     if song_length > 0:  # Ensure the song length is valid
         new_position = position * song_length  # Get the new position in seconds
         pygame.mixer.music.set_pos(new_position)  # Set the new position in seconds

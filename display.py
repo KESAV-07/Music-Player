@@ -160,9 +160,9 @@ def on_search():
 def update_progress():
     
     if pygame.mixer.music.get_busy() and song_length > 0:  # to  ensure there's a song playing
-        current_position = pygame.mixer.music.get_pos() / 1000  # Get position in seconds
+        current_position = time.time() - start_time  # Get position in seconds
         slider.set(current_position / song_length)  # Update seek bar
-    root.after(200, update_progress)  # Call this function again after 200 milliseconds
+    root.after(100, update_progress)  # Call this function again after 200 milliseconds
 
 def play_pause_music():
     global song_playing
@@ -179,7 +179,7 @@ def play_pause_music():
         else:
             play_music()  # Start a new song if no song was playing before
 def play_music():
-    global n, song_length, song_playing, song_duration_label, artist_name_label
+    global n, song_length, song_playing, song_duration_label, artist_name_label,start_time
     try:
         song_name = list_songs[n]
     except:
@@ -194,6 +194,7 @@ def play_music():
 
     # Update the song length
     song_length = pygame.mixer.Sound(song_name).get_length()  # Get the length of the song in seconds
+    start_time = time.time() # Store the starting time of the music
 
     # Extract song title and artist name
     base_name = song_name[6:-4]  # Remove the path and extension
@@ -239,9 +240,12 @@ def pause_music():
     song_playing = False  # Set the state to not playing
 
 def seek_music(position):
+    global start_time
     """Seek to a specific position in the song."""
     if song_length > 0:  # Ensure the song length is valid
         new_position = position * song_length  # Get the new position in seconds
+        curr_position = time.time() - start_time
+        start_time -= (new_position - curr_position)
         pygame.mixer.music.set_pos(new_position)  # Set the new position in seconds
         slider.set(position)  # Keep the slider updated after seeking
 

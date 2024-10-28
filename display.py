@@ -1,4 +1,3 @@
-#display
 import time
 import tkinter as tk
 from tkinter.font import BOLD
@@ -105,7 +104,7 @@ def create_frames(num_frames):
         frame = customtk.CTkFrame(master=root, width=515, height=35, corner_radius=20, fg_color="#000000", bg_color="#191919")
         frames.append(frame)
         frame.place(relx=0.3, rely=0.15 + (i * 0.07))  
-        
+
         select_image1 = Image.open("img/playbuttonwhite2.png")
         select_image1 = select_image1.resize((25,25), Image.LANCZOS)
         select_image_tk1 = ImageTk.PhotoImage(select_image1)
@@ -126,6 +125,7 @@ def create_frames(num_frames):
 def downloadAndPlay(music):
     song_name = download_song(music.title,music.artist)
     list_songs.clear()
+    
     list_songs.append(f'{song_name}.wav')
     next_song()
 
@@ -158,7 +158,7 @@ def on_search():
     search_song(query)  # Call the search function from search.py
 
 def update_progress():
-    
+
     if pygame.mixer.music.get_busy() and song_length > 0:  # to  ensure there's a song playing
         current_position = pygame.mixer.music.get_pos() / 1000  # Get position in seconds
         slider.set(current_position / song_length)  # Update seek bar
@@ -179,6 +179,7 @@ def play_pause_music():
         else:
             play_music()  # Start a new song if no song was playing before
 def play_music():
+    
     global n, song_length, song_playing, song_duration_label, artist_name_label
     try:
         song_name = list_songs[n]
@@ -213,7 +214,7 @@ def play_music():
 
     # Convert song length to minutes:seconds format
     song_duration = f"{int(song_length // 60)}:{int(song_length % 60):02d}"
-    
+
     # Update the song duration label on the window
     song_duration_label.config(text=f"{song_duration}")  # Update song duration label
     print(song_duration)  # Optional print for debugging
@@ -225,7 +226,7 @@ def play_music():
     create_loop_button()
     create_lyricsoff_button()
 
-    
+
 
 # Somewhere in your initialization code, you'll need to create the `song_duration_label`
 song_duration_label = tk.Label(root, text="0:00",fg="white",bg="black",font="circular 14")  # Initial placeholder text
@@ -240,6 +241,7 @@ def pause_music():
 
 def seek_music(position):
     """Seek to a specific position in the song."""
+    
     if song_length > 0:  # Ensure the song length is valid
         new_position = position * song_length  # Get the new position in seconds
         pygame.mixer.music.set_pos(new_position)  # Set the new position in seconds
@@ -271,13 +273,13 @@ def homepage():
     # Destroy all buttons
     for button in select_button1:
         button.destroy()
-    
+
     select_buttons.clear()  # Clear the buttons list
 
     # Destroy all frames
     for frame in frames:
         frame.destroy()
-    
+
     frames.clear()  # Clear the frames list
 def like_music():
     create_liked_button()
@@ -349,7 +351,7 @@ def create_like_button():
     return like_button
 
 def create_liked_button():
-    
+
     liked_image1 = Image.open("img/heartredbutton.png")
     liked_image1 = liked_image1.resize((35, 35), Image.LANCZOS)
     liked_image_tk1 = ImageTk.PhotoImage(liked_image1)
@@ -357,7 +359,7 @@ def create_liked_button():
     liked_button.place(relx=0.25, rely=0.92 ,anchor=tk.CENTER)
 
 def create_lyricsoff_button():
-    
+
     lyricsoff_image1 = Image.open("img/lyricsoffbutton.png")
     lyricsoff_image1 =lyricsoff_image1.resize((30, 30), Image.LANCZOS)
     lyricsoff_image_tk1 = ImageTk.PhotoImage(lyricsoff_image1)
@@ -365,7 +367,7 @@ def create_lyricsoff_button():
     lyricsoff_button.place(relx=0.6, rely=0.950, anchor=tk.CENTER)
 
 def create_lyricson_button():
-    
+
     lyricson_image1 = Image.open("img/lyricsonbutton.png")
     lyricson_image1 =lyricson_image1.resize((35, 35), Image.LANCZOS)
     lyricson_image_tk1 = ImageTk.PhotoImage(lyricson_image1)
@@ -444,7 +446,7 @@ def display_results(search_results):
     for x, result in enumerate(search_results):
         if x < len(frames):  # Ensure you don't exceed the number of frames available
             main_frame = frames[x]
-            
+
             # Prepare the display text with truncation if necessary
             display_text = f"Song: {result.title}, Artist: {result.artist}, Album: {result.album}"
             if len(display_text) > 100:
@@ -460,7 +462,7 @@ def display_results(search_results):
                 fg_color="#000000",  
                 wraplength=400  # fits the result within the frame width
             )
-            
+
             label.pack(padx=20, pady=5) 
 
 
@@ -474,7 +476,7 @@ def on_search(event=None):
         search_results = search_songs(query)  # Assuming perform_search is the function from search.py
         display_results(search_results)
 
-    
+
 search()
 
 # Volume Slider

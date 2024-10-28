@@ -244,8 +244,8 @@ def seek_music(position):
     """Seek to a specific position in the song."""
     if song_length > 0:  # Ensure the song length is valid
         new_position = position * song_length  # Get the new position in seconds
-        curr_position = time.time() - start_time
-        start_time -= (new_position - curr_position)
+        curr_position = time.time() - start_time # Get current position of slider
+        start_time -= (new_position - curr_position) # Change the start_time relative to the change in seek position
         pygame.mixer.music.set_pos(new_position)  # Set the new position in seconds
         slider.set(position)  # Keep the slider updated after seeking
 
